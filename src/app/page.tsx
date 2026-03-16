@@ -4,9 +4,6 @@ export default function Page() { // 여기서 함수명이 Home 이어도 되고
   return (
   <>
     <div>안녕하세요.</div>
-    <button onClick={() => {
-      alert("버튼이 클릭되었습니다.");
-    }}>버튼</button>
   </>
   );
 }
