@@ -5,17 +5,20 @@ import { PostDto } from "@/type/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function List() {
 
     const [posts, setPosts] = useState<PostDto[]>([]);
 
     useEffect(() => {
-        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`)
-        .then(data => {
-            console.log(data)
-            setPosts(data)
-        });
+
+        fetchApi(`/api/v1/posts`)
+            .then(data => {
+                console.log(data)
+                setPosts(data);
+            });
+
     }, []);
+
 
     return (
         posts.length <= 0
@@ -27,5 +30,5 @@ export default function Home() {
                     </li>
                 ))}
             </ul>
-    );
+    )
 }

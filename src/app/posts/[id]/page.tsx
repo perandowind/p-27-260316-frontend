@@ -6,28 +6,30 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 
-export default function Home() {
+export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
     const { id } = useParams();
 
-
     useEffect(() => {
-        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts/${id}`)
-            .then(data => setPost(data));
-    }, []);
 
-    if (post === null) return (<div>로딩중..</div>); // Null처리 (Early Exit 설정)
+        fetchApi(`/api/v1/posts/${id}`)
+            .then(data => setPost(data));
+
+    }, []);
 
     return (
         <>
-            <div className="flex flex-col gap-8 items-center">
-                <div>{id}번 글 상세페이지</div>
-                <div>
-                    <h1>{post.title}</h1>
-                    <div>{post.content}</div>
+            {post === null
+                ? <div>로딩중..</div>
+                : <div className="flex flex-col gap-8 items-center">
+                    <h1>{id}번 글 상세페이지</h1>
+                    <div>
+                        <h1>{post.title}</h1>
+                        <div>{post.content}</div>
+                    </div>
                 </div>
-            </div>
+            }
         </>
-    );
+    )
 }
