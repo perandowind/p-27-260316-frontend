@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Post } from "../page";
 
 export default function Home() {
-    
+
     const [post, setPost] = useState<Post | null>(null);
     const { id } = useParams();
 
@@ -19,18 +19,17 @@ export default function Home() {
             });
     }, []);
 
+    if (post === null) return (<div>로딩중..</div>); // Null처리 (Early Exit 설정)
+
     return (
         <>
-            {post === null
-            ? <div>로딩중..</div>
-            : <div className="flex flex-col gap-8 items-center">
+            <div className="flex flex-col gap-8 items-center">
                 <div>{id}번 글 상세페이지</div>
                 <div>
                     <h1>{post.title}</h1>
                     <div>{post.content}</div>
                 </div>
-            </div>}
+            </div>
         </>
-
     );
 }
