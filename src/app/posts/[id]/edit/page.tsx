@@ -46,18 +46,16 @@ export default function Edit() {
             return;
         }
 
-        // 수정
-        fetchApi(`/api/v1/posts`, {
-            method: "POST",
+        // db에 수정
+        fetchApi(`/api/v1/posts/${id}`, {
+            method: "PUT",
             body: JSON.stringify({
                 "title": title.value,
                 "content": content.value
             })
         })
             .then(rs => {
-                alert("글이 정상적으로 작성되었습니다.");
-                // 글 상세 페이지로 이동
-                router.replace(`/posts/${rs.data.postDto.id}`)
+                router.replace(`/posts/${id}`)
             })
     }
 
@@ -67,7 +65,7 @@ export default function Edit() {
         <>
             <h1>글 수정</h1>
 
-            <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
+            <form onSubmit={onSubmitHandler} className="flex flex-col gap-4">
                 <input
                     type="text"
                     name="title"
