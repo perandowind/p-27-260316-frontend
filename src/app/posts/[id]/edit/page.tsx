@@ -82,6 +82,7 @@ export default function Edit() {
                     className="bg-blue-500 text-white p-2 rounded" type="submit">
                     저장
                 </button>
+                
             </form>
         </>
     )

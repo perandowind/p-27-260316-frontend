@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PostDto } from "@/type/post";
+import { PostCommentDto, PostDto } from "@/type/post";
 import { fetchApi } from "@/lib/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,19 +10,24 @@ import Link from "next/link";
 export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
-    const { id } = useParams();
+    const [postComments, setPostComments] = useState<PostCommentDto[] | null>
+        (null);
+    const { id: postId } = useParams();
     const router = useRouter();
 
     useEffect(() => {
 
-        fetchApi(`/api/v1/posts/${id}`)
+        fetchApi(`/api/v1/posts/${postId}`)
             .then(data => setPost(data));
+
+        fetchApi(`/api/v1/posts/${postId}/comments`)
+            .then(setPostComments);
 
     }, []);
 
-    const onDeleteHandler = (id: number) => {
+    const onDeleteHandler = (postId: number) => {
 
-        fetchApi(`/api/v1/posts/${id}`, {
+        fetchApi(`/api/v1/posts/${postId}`, {
             method: "DELETE"
         })
             .then((rs) => {
@@ -32,25 +37,67 @@ export default function Detail() {
 
     }
 
+    const deletePostComment = (commentId: number) => {
+        fetchApi(`/api/v1/posts/${postId}/comments/${commentId}`, {
+            method: "DELETE",
+        }).then((data) => {
+            alert(data.msg);
+
+            if (postComments === null) return;
+
+            setPostComments(
+                postComments.filter((postComment) => postComment.id !== commentId)
+            );
+        });
+    };
+
     return (
         <>
             {post === null
                 ? <div>로딩중..</div>
                 : <div className="flex flex-col gap-8 items-center">
-                    <h1>{id}번 글 상세페이지</h1>
+                    <h1>{postId}번 글 상세페이지</h1>
                     <div>
                         <h1>{post.title}</h1>
                         <div>{post.content}</div>
                     </div>
-                    <div className="flex gap-3">
-                        <Link href={`/posts/${post.id}/edit`} className="border-1 rounded p-2 bg-blue-500">
-                        수정</Link>
+                    <div className="flex gap-4">
+                        <Link
+                            href={`/posts/${post.id}/edit`}
+                            className="border-1 rounded p-2 bg-blue-500">
+                            수정</Link>
                         <button
                             onClick={() => {
                                 onDeleteHandler(post.id);
                             }}
                             className="border-1 rounded p-2 bg-red-500">삭제</button>
                     </div>
+                    <h2 className="p-2">댓글 목록</h2>
+
+                    {postComments === null && <div>Loading...</div>}
+                    {postComments !== null && postComments.length === 0 && (
+                        <div>댓글이 없습니다.</div>
+                    )}
+
+                    {postComments !== null && postComments.length > 0 && (
+                        <ul className="flex flex-col gap-2">
+                            {postComments.map((postComment) => (
+                                <li key={postComment.id} className="flex gap-2 items-center">
+                                    <span>{postComment.id} : </span>
+                                    <span>{postComment.content}</span>
+                                    <button className="border-2 p-2 rounded">수정</button>
+                                    <button
+                                        className="border-2 p-2 rounded"
+                                        onClick={() => {
+                                            deletePostComment(postComment.id);
+                                        }}
+                                    >
+                                        삭제
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             }
         </>
